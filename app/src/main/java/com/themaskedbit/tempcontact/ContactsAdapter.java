@@ -2,6 +2,7 @@ package com.themaskedbit.tempcontact;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,14 +43,18 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Contact contact = contactsList.get(position);
-        holder.name.setText(contact.getName());
+        if(contact.getName() == null) {
+            holder.name.setText("Unknown Number");
+        }
+        else
+            holder.name.setText(contact.getName());
         holder.number.setText(contact.getNumber());
 //        if(contact.getPhoto()== null){
 //            holder.photo.setImageResource(R.drawable.ic_launcher_foreground);
 //        }
 //        else
 //            holder.photo.setImageURI(Uri.parse(contact.getPhoto()));
-        holder.photo.setImageResource(R.drawable.ic_launcher_foreground);
+        holder.photo.setImageResource(R.mipmap.contacts);
     }
 
     @Override
