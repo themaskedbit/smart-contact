@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Temp Contact</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="call_log_fragment">call log fragment</string>
+    <string name="blank_fragment">Coming soon!</string>
+</resources>
