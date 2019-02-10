@@ -189,7 +189,8 @@ public class CallLogFragment extends Fragment {
             Cursor c = getActivity().getApplicationContext().getContentResolver().query(CallLog.Calls.CONTENT_URI, projection, null,
                     null, CallLog.Calls.DATE + " DESC");
 
-            String prevNumber = "1";
+            String prevNumber = null;
+            int preType = -1;
             int index = 0;
 
             if (c.getCount() > 0)
@@ -203,31 +204,20 @@ public class CallLogFragment extends Fragment {
                     long callDateandTime = c.getLong(c.getColumnIndex(CallLog.Calls.DATE));
                     long callDuration = c.getLong(c.getColumnIndex(CallLog.Calls.DURATION));
                     int callType = c.getInt(c.getColumnIndex(CallLog.Calls.TYPE));
-                    if(callType == CallLog.Calls.INCOMING_TYPE)
-                    {
-                        //incoming call
-                    }
-                    else if(callType == CallLog.Calls.OUTGOING_TYPE)
-                    {
-                        //outgoing call
-                    }
-                    else if(callType == CallLog.Calls.MISSED_TYPE)
-                    {
-                        //missed call
-                    }
-                    if (prevNumber.equals(callerNumber)) {
-                            count = count + 1;
-                            Contact contact = new Contact(callerName, callerNumber, callerPhoto, count);
+                    if (prevNumber !=null && preType != -1 && prevNumber.equals(callerNumber) && preType == callType ) {
+                            count++;
+                            Contact contact = new Contact(callerName, callerNumber, callerPhoto, count, callType);
                             contactList.set(index,contact);
-                            }
+                    }
                     else {
                         count = 1;
-                        Contact contact = new Contact(callerName, callerNumber, callerPhoto, count);
+                        Contact contact = new Contact(callerName, callerNumber, callerPhoto, count, callType);
                         contactList.add(contact);
                         index = contactList.indexOf(contact);
                         mAdapter.notifyDataSetChanged();
                     }
                     prevNumber = callerNumber;
+                    preType = callType;
                 }while(c.moveToNext());
                 mAdapter.notifyDataSetChanged();
             }

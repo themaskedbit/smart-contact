@@ -2,17 +2,26 @@ package com.themaskedbit.tempcontact;
 
 public class Contact {
     private String name, number, photo;
-    private int count;
+    private int count, type;
 
     public Contact() {
 
     }
 
-    public Contact(String name, String number, String photo, int count) {
+    public Contact(String name, String number, String photo, int count, int type) {
         this.name = name;
         this.number = number;
         this.photo = photo;
         this.count = count;
+        this.type = type;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getPhoto() {
