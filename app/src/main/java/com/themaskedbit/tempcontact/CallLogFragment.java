@@ -159,15 +159,21 @@ public class CallLogFragment extends Fragment {
                 CallLog.Calls.DURATION,
                 CallLog.Calls.TYPE
         };
+
+        int count = 1;
         if (hasPermissions(this.getActivity(),NECESSARY_PERMISSIONS)) {
             //Permission is granted
             @SuppressLint("MissingPermission")
             Cursor c = getActivity().getApplicationContext().getContentResolver().query(CallLog.Calls.CONTENT_URI, projection, null,
                     null, CallLog.Calls.DATE + " DESC");
 
+            String prevNumber = "1";
+            int index = 0;
+
             if (c.getCount() > 0)
             {
                 c.moveToFirst();
+                //Intialize with first number
                 do{
                     String callerName = c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME));
                     String callerNumber = c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));
@@ -187,9 +193,19 @@ public class CallLogFragment extends Fragment {
                     {
                         //missed call
                     }
-                    Contact contact = new Contact(callerName, callerNumber, callerPhoto);
-                    contactList.add(contact);
-                    mAdapter.notifyDataSetChanged();
+                    if (prevNumber.equals(callerNumber)) {
+                            count = count + 1;
+                            Contact contact = new Contact(callerName, callerNumber, callerPhoto, count);
+                            contactList.set(index,contact);
+                            }
+                    else {
+                        count = 1;
+                        Contact contact = new Contact(callerName, callerNumber, callerPhoto, count);
+                        contactList.add(contact);
+                        index = contactList.indexOf(contact);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                    prevNumber = callerNumber;
                 }while(c.moveToNext());
                 mAdapter.notifyDataSetChanged();
             }
