@@ -22,7 +22,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     private List<Contact> contactsList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, number;
+        public TextView name, number, count;
         public ImageView photo;
 
         public MyViewHolder(View view) {
@@ -49,11 +49,23 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Contact contact = contactsList.get(position);
-        if(contact.getName() == null) {
-            holder.name.setText("Unknown Number");
+        if (contact.getCount() != 1){
+            if(contact.getName() == null) {
+                holder.name.setText("Unknown Number (" + String.valueOf(contact.getCount()) + ")");
+            }
+            else {
+                holder.name.setText(contact.getName() + " (" + String.valueOf(contact.getCount()) + ")");
+            }
         }
-        else
-            holder.name.setText(contact.getName());
+        else {
+            if(contact.getName() == null) {
+                holder.name.setText("Unknown Number");
+            }
+            else {
+                holder.name.setText(contact.getName());
+            }
+        }
+
         holder.number.setText(contact.getNumber());
         if(contact.getPhoto()== null){
             holder.photo.setImageResource(R.mipmap.contacts);
