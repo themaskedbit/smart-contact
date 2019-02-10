@@ -10,32 +10,43 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.provider.CallLog;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyViewHolder> {
 
     private List<Contact> contactsList;
+    private HashMap<Integer,Integer> callTypeMap;
+
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name, number, count;
-        public ImageView photo;
+        public ImageView photo, callTypeIcon;
 
         public MyViewHolder(View view) {
             super(view);
             name = (TextView) view.findViewById(R.id.name);
             number = (TextView) view.findViewById(R.id.number);
             photo = (ImageView) view.findViewById(R.id.photo);
+            callTypeIcon = (ImageView) view.findViewById(R.id.call_type);
         }
     }
 
 
     public ContactsAdapter(List<Contact> contactsList) {
         this.contactsList = contactsList;
+        this.callTypeMap = new HashMap<Integer,Integer>();
+        this.callTypeMap.put(CallLog.Calls.INCOMING_TYPE, android.R.drawable.sym_call_incoming);
+        this.callTypeMap.put(CallLog.Calls.MISSED_TYPE, android.R.drawable.sym_call_missed);
+        this.callTypeMap.put(CallLog.Calls.OUTGOING_TYPE, android.R.drawable.sym_call_outgoing);
+        this.callTypeMap.put(CallLog.Calls.REJECTED_TYPE, android.R.drawable.sym_call_missed);
     }
 
     @Override
@@ -72,6 +83,14 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
         }
         else
             holder.photo.setImageURI(Uri.parse(contact.getPhoto()));
+
+        //ToDO
+
+        if(this.callTypeMap.get(contact.getType()) != null) {
+            holder.callTypeIcon.setImageResource(this.callTypeMap.get(contact.getType()));
+        } else{
+            holder.callTypeIcon.setImageResource(android.R.drawable.sym_call_missed);
+        }
 //        else {
 //            holder.photo.setImageBitmap(getBitmapFromURL(contact.getPhoto()));
 //            Log.e("log", contact.getPhoto());
@@ -96,4 +115,5 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
             e.printStackTrace();
             return null;
         }}
+
 }
