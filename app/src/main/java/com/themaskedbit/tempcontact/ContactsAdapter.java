@@ -81,8 +81,11 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
         if(contact.getPhoto()== null){
             holder.photo.setImageResource(R.mipmap.contacts);
         }
-        else
+        else {
             holder.photo.setImageURI(Uri.parse(contact.getPhoto()));
+            if(holder.photo.getDrawable() == null)
+                holder.photo.setImageResource(R.mipmap.contacts);
+        }
 
         //ToDO
 
