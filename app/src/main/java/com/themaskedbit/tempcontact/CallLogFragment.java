@@ -50,7 +50,7 @@ public class CallLogFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    final String[] NECESSARY_PERMISSIONS = new String[] {Manifest.permission.READ_CALL_LOG };
+    final String[] NECESSARY_PERMISSIONS = new String[] {Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_CONTACTS };
     final int [] PERMISSION_CODE = new int[123];
 
     private OnFragmentInteractionListener mListener;
@@ -128,7 +128,8 @@ public class CallLogFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_CODE[0]) {
             if (permissions[0].equals(Manifest.permission.READ_CALL_LOG)
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[1].equals(Manifest.permission.READ_CONTACTS)
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 getCallDetails();
             }
         }
@@ -158,9 +159,9 @@ public class CallLogFragment extends Fragment {
                 CallLog.Calls.DURATION,
                 CallLog.Calls.TYPE
         };
-        if (checkSelfPermission(this.getActivity(),
-                Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+        if (hasPermissions(this.getActivity(),NECESSARY_PERMISSIONS)) {
             //Permission is granted
+            @SuppressLint("MissingPermission")
             Cursor c = getActivity().getApplicationContext().getContentResolver().query(CallLog.Calls.CONTENT_URI, projection, null,
                     null, CallLog.Calls.DATE + " DESC");
 
@@ -197,5 +198,16 @@ public class CallLogFragment extends Fragment {
             requestPermissions(
                     NECESSARY_PERMISSIONS, PERMISSION_CODE[0]);
         }
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
