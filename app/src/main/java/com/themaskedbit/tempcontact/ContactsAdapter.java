@@ -85,7 +85,12 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
             holder.photo.setImageURI(Uri.parse(contact.getPhoto()));
 
         //ToDO
-        holder.callTypeIcon.setImageResource(this.callTypeMap.get(contact.getType()));
+
+        if(this.callTypeMap.get(contact.getType()) != null) {
+            holder.callTypeIcon.setImageResource(this.callTypeMap.get(contact.getType()));
+        } else{
+            holder.callTypeIcon.setImageResource(android.R.drawable.sym_call_missed);
+        }
 //        else {
 //            holder.photo.setImageBitmap(getBitmapFromURL(contact.getPhoto()));
 //            Log.e("log", contact.getPhoto());
