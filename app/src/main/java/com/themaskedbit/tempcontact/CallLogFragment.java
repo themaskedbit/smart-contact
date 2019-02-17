@@ -3,7 +3,6 @@ package com.themaskedbit.tempcontact;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,22 +11,16 @@ import android.provider.CallLog;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentContainer;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telecom.Call;
-import android.util.Log;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static android.support.v4.content.PermissionChecker.checkSelfPermission;
@@ -48,7 +41,7 @@ public class CallLogFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private List<Contact> contactList = new ArrayList<>();
     private RecyclerView recyclerView;
-    private ContactsAdapter mAdapter;
+    private CallLogAdapter mAdapter;
     private FloatingActionButton floatingActionButton;
 
     // TODO: Rename and change types of parameters
@@ -95,7 +88,6 @@ public class CallLogFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_call_log, container, false);
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -140,14 +132,17 @@ public class CallLogFragment extends Fragment {
             }
         });
 
-
-        mAdapter = new ContactsAdapter(contactList);
+        mAdapter = new CallLogAdapter(contactList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+        SwipeController swipeController = new SwipeController();
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeController);
+        itemTouchhelper.attachToRecyclerView(recyclerView);
         getCallDetails();
     }
+
 
     @Override
     public void onDetach() {
@@ -247,7 +242,4 @@ public class CallLogFragment extends Fragment {
         }
         return true;
     }
-
-
-
 }

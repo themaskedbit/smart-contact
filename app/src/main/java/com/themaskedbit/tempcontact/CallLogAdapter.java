@@ -1,10 +1,7 @@
 package com.themaskedbit.tempcontact;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyViewHolder> {
+public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.MyViewHolder> {
 
     private List<Contact> contactsList;
     private List<Contact> contactListFiltered;
@@ -42,7 +39,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     }
 
 
-    public ContactsAdapter(List<Contact> contactsList) {
+    public CallLogAdapter(List<Contact> contactsList) {
         this.contactsList = contactsList;
         this.callTypeMap = new HashMap<Integer,Integer>();
         this.callTypeMap.put(CallLog.Calls.INCOMING_TYPE, android.R.drawable.sym_call_incoming);
@@ -54,7 +51,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.contact_list, parent, false);
+                .inflate(R.layout.call_log_list, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -107,45 +104,23 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
         return contactsList.size();
     }
 
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }}
-
-
     public List<Contact> getFilter(String Query) {
-                if (Query.isEmpty()) {
-                    contactListFiltered = contactsList;
-                } else {
-                    List<Contact> filteredList = new ArrayList<>();
-                    for (Contact row : contactsList) {
+        if (Query.isEmpty()) {
+            contactListFiltered = contactsList;
+        } else {
+            List<Contact> filteredList = new ArrayList<>();
+            for (Contact row : contactsList) {
 
-                        // name match condition. this might differ depending on your requirement
-                        // here we are looking for name or phone number match
-                        if (row.getName().toLowerCase().contains(Query.toLowerCase()) || row.getNumber().contains(Query)) {
-                            filteredList.add(row);
-                        }
-                    }
-
-                    contactListFiltered = filteredList;
+                // name match condition. this might differ depending on your requirement
+                // here we are looking for name or phone number match
+                if (row.getName().toLowerCase().contains(Query.toLowerCase()) || row.getNumber().contains(Query)) {
+                    filteredList.add(row);
                 }
-
-                return contactListFiltered;
             }
 
+            contactListFiltered = filteredList;
+        }
 
-
-
-
-
-
+        return contactListFiltered;
+    }
 }
