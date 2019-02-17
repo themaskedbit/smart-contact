@@ -54,24 +54,31 @@ public class ContactActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        getCallDetails();
+
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        getCallDetails();
+    }
 
     private void getCallDetails() {
         if (hasPermissions(this,NECESSARY_PERMISSIONS)) {
             //Permission is granted
             @SuppressLint("MissingPermission")
             ContentResolver cr = getContentResolver();
+            Log.d("time","started");
             Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, PROJECTION, FILTER, null, ORDER);
 
             if (cursor != null && cursor.moveToFirst()) {
                 do{
+
                     String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                     String callerName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                     String photoUri = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
                     ArrayList<String> callerNumbers  = new ArrayList<>();
-
+                    Log.d("time","got item");
                     if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
                         Cursor crPhones = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID
@@ -93,7 +100,8 @@ public class ContactActivity extends AppCompatActivity {
                     mAdapter.notifyDataSetChanged();
                 }while(cursor.moveToNext());
                 cursor.close();
-                mAdapter.notifyDataSetChanged();
+                Log.d("time","completed");
+//                mAdapter.notifyDataSetChanged();
             }
         } else {
             //ask for permission
