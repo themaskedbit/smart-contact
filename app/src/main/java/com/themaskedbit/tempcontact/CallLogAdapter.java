@@ -70,7 +70,7 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.MyViewHo
             }
         }
 
-        holder.number.setText(contact.getNumber());
+        holder.number.setText(contact.getFirstNumber());
         if(contact.getPhoto()== null){
             holder.photo.setImageResource(R.mipmap.contacts);
         }
