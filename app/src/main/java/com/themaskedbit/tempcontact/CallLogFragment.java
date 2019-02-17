@@ -3,6 +3,7 @@ package com.themaskedbit.tempcontact;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentContainer;
@@ -46,6 +49,7 @@ public class CallLogFragment extends Fragment {
     private List<Contact> contactList = new ArrayList<>();
     private RecyclerView recyclerView;
     private ContactsAdapter mAdapter;
+    private FloatingActionButton floatingActionButton;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -91,6 +95,7 @@ public class CallLogFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_call_log, container, false);
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -109,6 +114,32 @@ public class CallLogFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view);
+
+        floatingActionButton    = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+                                             @Override
+                                             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                                                 super.onScrolled(recyclerView, dx, dy);
+                                                 if(dy == 0){
+                                                     floatingActionButton.hide();
+                                                 }
+                                                 else if (dy < 0) {
+                                                     floatingActionButton.hide();
+                                                 } else{
+                                                     floatingActionButton.show();
+                                                 }
+                                             }
+                                         });
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Click action
+                recyclerView.smoothScrollToPosition(0);
+            }
+        });
+
 
         mAdapter = new ContactsAdapter(contactList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
@@ -216,4 +247,7 @@ public class CallLogFragment extends Fragment {
         }
         return true;
     }
+
+
+
 }
