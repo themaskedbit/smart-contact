@@ -20,6 +20,15 @@ public class Contact {
         this.type = type;
     }
 
+    public Contact(String name, String number, String photo, int count, int type) {
+        this.name = name;
+        this.numbers = new ArrayList<>();
+        this.numbers.add(number);
+        this.photo = photo;
+        this.count = count;
+        this.type = type;
+    }
+
     public Contact(String name, ArrayList<String> numbers, String photo) {
         this.name = name;
         this.numbers = numbers;
