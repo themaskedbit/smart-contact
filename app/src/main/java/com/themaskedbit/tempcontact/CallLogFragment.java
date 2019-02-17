@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.CallLog;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,6 +42,7 @@ public class CallLogFragment extends Fragment {
     private List<Contact> contactList = new ArrayList<>();
     private RecyclerView recyclerView;
     private CallLogAdapter mAdapter;
+    private FloatingActionButton floatingActionButton;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -104,6 +106,31 @@ public class CallLogFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recycler_view);
+
+        floatingActionButton    = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+                                             @Override
+                                             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                                                 super.onScrolled(recyclerView, dx, dy);
+                                                 if(dy == 0){
+                                                     floatingActionButton.hide();
+                                                 }
+                                                 else if (dy < 0) {
+                                                     floatingActionButton.hide();
+                                                 } else{
+                                                     floatingActionButton.show();
+                                                 }
+                                             }
+                                         });
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Click action
+                recyclerView.smoothScrollToPosition(0);
+            }
+        });
 
         mAdapter = new CallLogAdapter(contactList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
