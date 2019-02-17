@@ -1,6 +1,7 @@
 package com.themaskedbit.tempcontact;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.provider.CallLog;
@@ -15,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,7 +79,11 @@ public class MainActivity extends AppCompatActivity {
             return mFragmentTitleList.get(position);
         }
     }
+    public void loadContact(View v) {
+        Intent intent = new Intent(this, ContactActivity.class);
+        startActivity(intent);
 
+    }
     private String getCallDetails() {
 
         StringBuffer sb = new StringBuffer();

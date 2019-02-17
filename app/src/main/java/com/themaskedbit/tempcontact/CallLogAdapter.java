@@ -9,12 +9,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.provider.CallLog;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.MyViewHolder> {
 
     private List<Contact> contactsList;
+    private List<Contact> contactListFiltered;
     private HashMap<Integer,Integer> callTypeMap;
 
 
@@ -70,7 +76,7 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.MyViewHo
             }
         }
 
-        holder.number.setText(contact.getNumber());
+        holder.number.setText(contact.getFirstNumber());
         if(contact.getPhoto()== null){
             holder.photo.setImageResource(R.mipmap.contacts);
         }
@@ -98,4 +104,23 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.MyViewHo
         return contactsList.size();
     }
 
+    public List<Contact> getFilter(String Query) {
+        if (Query.isEmpty()) {
+            contactListFiltered = contactsList;
+        } else {
+            List<Contact> filteredList = new ArrayList<>();
+            for (Contact row : contactsList) {
+
+                // name match condition. this might differ depending on your requirement
+                // here we are looking for name or phone number match
+                if (row.getName().toLowerCase().contains(Query.toLowerCase()) || row.getNumber().contains(Query)) {
+                    filteredList.add(row);
+                }
+            }
+
+            contactListFiltered = filteredList;
+        }
+
+        return contactListFiltered;
+    }
 }
