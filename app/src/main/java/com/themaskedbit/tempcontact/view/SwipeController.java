@@ -1,4 +1,4 @@
-package com.themaskedbit.tempcontact;
+package com.themaskedbit.tempcontact.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;

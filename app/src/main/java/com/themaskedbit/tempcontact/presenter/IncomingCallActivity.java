@@ -1,4 +1,4 @@
-package com.themaskedbit.tempcontact;
+package com.themaskedbit.tempcontact.presenter;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import com.themaskedbit.tempcontact.R;
 
 public class IncomingCallActivity extends AppCompatActivity {
 

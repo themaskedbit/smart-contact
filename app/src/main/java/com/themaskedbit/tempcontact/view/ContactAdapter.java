@@ -1,4 +1,4 @@
-package com.themaskedbit.tempcontact;
+package com.themaskedbit.tempcontact.view;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.themaskedbit.tempcontact.R;
+import com.themaskedbit.tempcontact.model.Contact;
 
 import java.io.IOException;
 import java.io.InputStream;
