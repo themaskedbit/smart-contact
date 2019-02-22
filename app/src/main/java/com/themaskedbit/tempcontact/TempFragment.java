@@ -86,7 +86,7 @@ public class TempFragment extends Fragment {
 
         textView = (TextView) getActivity().findViewById(R.id.action_search);
         final List<Contact> ContactList = new ArrayList<>();
-        final ContactsAdapter mAdapter = new ContactsAdapter(ContactList);
+        final CallLogAdapter mAdapter = new CallLogAdapter(ContactList);
        textView.addTextChangedListener(new TextWatcher() {
            @Override
            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
