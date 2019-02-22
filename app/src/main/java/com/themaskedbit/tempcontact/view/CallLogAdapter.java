@@ -1,4 +1,4 @@
-package com.themaskedbit.tempcontact;
+package com.themaskedbit.tempcontact.view;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -9,10 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.provider.CallLog;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.themaskedbit.tempcontact.model.Contact;
+import com.themaskedbit.tempcontact.R;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

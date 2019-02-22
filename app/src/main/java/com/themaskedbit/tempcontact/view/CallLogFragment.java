@@ -1,9 +1,8 @@
-package com.themaskedbit.tempcontact;
+package com.themaskedbit.tempcontact.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,10 +19,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.themaskedbit.tempcontact.CallLogContract;
+import com.themaskedbit.tempcontact.model.Contact;
+import com.themaskedbit.tempcontact.PermissionHandler;
+import com.themaskedbit.tempcontact.PermissionHandlerAndroid;
+import com.themaskedbit.tempcontact.R;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 
 /**
@@ -34,21 +37,32 @@ import static android.support.v4.content.PermissionChecker.checkSelfPermission;
  * Use the {@link CallLogFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CallLogFragment extends Fragment {
+public class CallLogFragment extends Fragment implements CallLogContract.View {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private List<Contact> contactList = new ArrayList<>();
+    private List<Contact> returnContacts;
     private RecyclerView recyclerView;
     private CallLogAdapter mAdapter;
     private FloatingActionButton floatingActionButton;
+    private CallLogContract.Presenter presenter;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     final String[] NECESSARY_PERMISSIONS = new String[] {Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_CONTACTS };
     final int [] PERMISSION_CODE = new int[123];
+    private String[] projection = new String[]{
+            CallLog.Calls.CACHED_NAME,
+            CallLog.Calls.NUMBER,
+            CallLog.Calls.CACHED_PHOTO_URI,
+            CallLog.Calls.DATE,
+            CallLog.Calls.DURATION,
+            CallLog.Calls.TYPE
+    };
+    private PermissionHandler permissionHandler;
 
     private OnFragmentInteractionListener mListener;
 
@@ -56,15 +70,7 @@ public class CallLogFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CallLogFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static CallLogFragment newInstance(String param1, String param2) {
         CallLogFragment fragment = new CallLogFragment();
         Bundle args = new Bundle();
@@ -81,6 +87,7 @@ public class CallLogFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        permissionHandler = new PermissionHandlerAndroid();
     }
 
     @Override
@@ -90,12 +97,6 @@ public class CallLogFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_call_log, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -140,7 +141,15 @@ public class CallLogFragment extends Fragment {
         SwipeController swipeController = new SwipeController();
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeController);
         itemTouchhelper.attachToRecyclerView(recyclerView);
-        getCallDetails();
+        if (permissionHandler.checkHasPermission(this.getActivity(),NECESSARY_PERMISSIONS)) {
+            @SuppressLint("MissingPermission") Cursor c = getActivity().getApplicationContext().getContentResolver().query(CallLog.Calls.CONTENT_URI, projection, null,
+                    null, CallLog.Calls.DATE + " DESC");
+            returnContacts = presenter.fetchCallLog(c);
+            addData(returnContacts);
+        }
+        else {
+            permissionHandler.requestPermission(this.getActivity(), NECESSARY_PERMISSIONS,PERMISSION_CODE[0]);
+        }
     }
 
 
@@ -152,13 +161,26 @@ public class CallLogFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_CODE[0]) {
-            if (permissions[0].equals(Manifest.permission.READ_CALL_LOG)
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[1].equals(Manifest.permission.READ_CONTACTS)
-                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                getCallDetails();
-            }
+        if(permissionHandler.onPermissionResult(this.getActivity(),requestCode,permissions,grantResults,PERMISSION_CODE[0],new String[]{Manifest.permission.READ_CALL_LOG,Manifest.permission.READ_CONTACTS})){
+            @SuppressLint("MissingPermission") Cursor c = getActivity().getApplicationContext().getContentResolver().query(CallLog.Calls.CONTENT_URI, projection, null,
+                    null, CallLog.Calls.DATE + " DESC");
+            returnContacts=presenter.fetchCallLog(c);
+            addData(returnContacts);
         }
+    }
+
+    @Override
+    public void setPresenter(CallLogContract.Presenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void addData(List<Contact> returnContacts) {
+        for(Contact data : returnContacts) {
+            contactList.add(data);
+        }
+
+        mAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -176,70 +198,16 @@ public class CallLogFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private void getCallDetails() {
-        String[] projection = new String[]{
-                CallLog.Calls.CACHED_NAME,
-                CallLog.Calls.NUMBER,
-                CallLog.Calls.CACHED_PHOTO_URI,
-                CallLog.Calls.DATE,
-                CallLog.Calls.DURATION,
-                CallLog.Calls.TYPE
-        };
 
-        int count = 1;
-        if (hasPermissions(this.getActivity(),NECESSARY_PERMISSIONS)) {
-            //Permission is granted
-            @SuppressLint("MissingPermission")
-            Cursor c = getActivity().getApplicationContext().getContentResolver().query(CallLog.Calls.CONTENT_URI, projection, null,
-                    null, CallLog.Calls.DATE + " DESC");
 
-            String prevNumber = null;
-            int preType = -1;
-            int index = 0;
-
-            if (c.getCount() > 0)
-            {
-                c.moveToFirst();
-                //Intialize with first number
-                do{
-                    String callerName = c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME));
-                    String callerNumber = c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));
-                    String callerPhoto = c.getString(c.getColumnIndex(CallLog.Calls.CACHED_PHOTO_URI));
-                    long callDateandTime = c.getLong(c.getColumnIndex(CallLog.Calls.DATE));
-                    long callDuration = c.getLong(c.getColumnIndex(CallLog.Calls.DURATION));
-                    int callType = c.getInt(c.getColumnIndex(CallLog.Calls.TYPE));
-                    if (prevNumber !=null && preType != -1 && prevNumber.equals(callerNumber) && preType == callType ) {
-                            count++;
-                            Contact contact = new Contact(callerName, callerNumber, callerPhoto, count, callType);
-                            contactList.set(index,contact);
-                    }
-                    else {
-                        count = 1;
-                        Contact contact = new Contact(callerName, callerNumber, callerPhoto, count, callType);
-                        contactList.add(contact);
-                        index = contactList.indexOf(contact);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                    prevNumber = callerNumber;
-                    preType = callType;
-                }while(c.moveToNext());
-                mAdapter.notifyDataSetChanged();
-            }
-        } else {
-            //ask for permission
-            requestPermissions(
-                    NECESSARY_PERMISSIONS, PERMISSION_CODE[0]);
-        }
-    }
-
-    public static boolean hasPermissions(Context context, String... permissions) {
-        if (context != null && permissions != null) {
-            for (String permission : permissions) {
-                if (checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+//    public static boolean hasPermissions(Context context, String... permissions) {
+//        if (context != null && permissions != null) {
+//            for (String permission : permissions) {
+//                if (checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
+//    }
 }

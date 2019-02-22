@@ -1,4 +1,4 @@
-package com.themaskedbit.tempcontact;
+package com.themaskedbit.tempcontact.model;
 
 import java.util.ArrayList;
 import java.util.List;
