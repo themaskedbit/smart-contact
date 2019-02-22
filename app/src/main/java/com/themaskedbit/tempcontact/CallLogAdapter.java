@@ -113,7 +113,7 @@ public class CallLogAdapter extends RecyclerView.Adapter<CallLogAdapter.MyViewHo
 
                 // name match condition. this might differ depending on your requirement
                 // here we are looking for name or phone number match
-                if (row.getName().toLowerCase().contains(Query.toLowerCase()) || row.getNumber().contains(Query)) {
+                if (row.getName().toLowerCase().contains(Query.toLowerCase()) || row.getNumbers().contains(Query)) {
                     filteredList.add(row);
                 }
             }
