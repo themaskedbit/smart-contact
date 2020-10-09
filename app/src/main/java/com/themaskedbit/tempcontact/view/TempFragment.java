@@ -68,26 +68,26 @@ public class TempFragment extends Fragment implements TempContract.View {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         // TODO: Rename method, update argument and hook method into UI event
 
-        textView = (TextView) getActivity().findViewById(R.id.action_search);
+        //textView = (TextView) getActivity().findViewById(R.id.action_search);
         final List<Contact> ContactList = new ArrayList<>();
         final CallLogAdapter mAdapter = new CallLogAdapter(ContactList);
-        textView.addTextChangedListener(new TextWatcher() {
-           @Override
-           public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-           }
-
-           @Override
-           public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-           }
-
-           @Override
-           public void afterTextChanged(Editable editable) {
-               //REVISIT : Use the presenter TempPresenterImpl to do any update to model.
-               //List<Contact> filterContact = mAdapter.getFilter(editable.toString());
-           }
-       });
+//        textView.addTextChangedListener(new TextWatcher() {
+//           @Override
+//           public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//           }
+//
+//           @Override
+//           public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//           }
+//
+//           @Override
+//           public void afterTextChanged(Editable editable) {
+//               //REVISIT : Use the presenter TempPresenterImpl to do any update to model.
+//               //List<Contact> filterContact = mAdapter.getFilter(editable.toString());
+//           }
+//       });
     }
 
     @Override
